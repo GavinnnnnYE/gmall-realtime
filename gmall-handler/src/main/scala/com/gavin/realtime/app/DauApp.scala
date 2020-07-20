@@ -42,7 +42,7 @@ object DauApp {
 
       client.close()     //这一步不能忘，不然一会池子就用完了！
 
-      // 3.2 必须把集合做一个广播变量，避免一个Executor存多份(每个分区/Task存1份)变量，造成性能浪费
+      // 3.2 把集合做一个广播变量，避免一个Executor存多份(每个分区/Task存1份)变量，造成性能浪费
       val midBC: Broadcast[util.Set[String]] = ssc.sparkContext.broadcast(mids)
       // 返回那些没有启动过的设备的启动记录
 

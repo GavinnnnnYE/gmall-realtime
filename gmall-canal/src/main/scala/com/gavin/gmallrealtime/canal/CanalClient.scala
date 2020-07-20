@@ -3,37 +3,14 @@ package com.gavin.gmallrealtime.canal
 import java.net.InetSocketAddress
 import java.util
 
-import com.alibaba.fastjson.JSONObject
 import com.alibaba.otter.canal.client.{CanalConnector, CanalConnectors}
 import com.alibaba.otter.canal.protocol.CanalEntry.{EntryType, EventType, RowChange}
 import com.alibaba.otter.canal.protocol.{CanalEntry, Message}
-import com.gavin.gmallrealtime.constant.GmallConstant
 import com.google.protobuf.ByteString
 
 import scala.collection.JavaConverters._
 
 object CanalClient {
-
-  def handleData(rowDatasList: util.List[CanalEntry.RowData], tableName: String, eventType: CanalEntry.EventType) = {
-    if(tableName == "order_info" && eventType == EventType.INSERT && rowDatasList != null && !rowDatasList.isEmpty){
-      for(rowData <- rowDatasList.asScala){
-        // mysql 中的一行，到kafka的时候是一条
-        val obj = new JSONObject()
-        // after 表示变化后的数据
-        val columnsList: util.List[CanalEntry.Column] = rowData.getAfterColumnsList
-        for(column <- columnsList.asScala){
-          //id:100  total_amount:100.2
-          val key: String = column.getName
-          val value: String = column.getValue
-          obj.put(key,value)
-        }
-        //println(obj.toString)
-
-        //4. 把解析后的数据，组成json字符串，写入kafka
-        MyKafkaUtil.sendToKafka(GmallConstant.TOPIC_ORDER_INFO, obj.toJSONString)
-      }
-    }
-  }
 
   def main(args: Array[String]): Unit = {
     //1. 连接canal
@@ -43,7 +20,7 @@ object CanalClient {
     connector.connect() //手动连接
 
     //2. 拉取数据
-      //2.1 订阅想拉取的数据
+      //2.1 订阅想拉取的数据(表)
     connector.subscribe("gmall_realtime.*")
       //2.2 不断拉取数据
     while(true){
@@ -62,7 +39,7 @@ object CanalClient {
             val rowChange: RowChange = RowChange.parseFrom(value)
             val rowDatasList: util.List[CanalEntry.RowData] = rowChange.getRowDatasList
             //3. 解析数据
-            handleData(rowDatasList,entry.getHeader.getTableName, rowChange.getEventType)
+            CanalHandler.handleData(rowDatasList,entry.getHeader.getTableName, rowChange.getEventType)
           }
         }
       }else{

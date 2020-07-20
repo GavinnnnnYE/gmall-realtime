@@ -43,7 +43,7 @@ object JsonMock {
     ("360", 20), ("tencent", 20), ("baidu", 10), ("website", 10))
 
   // 生成模拟数据的时候是否结束退出
-  val quitOpts = RandomOptions((true, 5), (false, 95))
+  val quitOpts = RandomOptions((true, 90), (false, 95))
 
   // 模拟出来一条启动日志
   def initOneStartupLog(): String = {
