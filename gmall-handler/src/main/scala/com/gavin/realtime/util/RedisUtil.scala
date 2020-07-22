@@ -6,6 +6,7 @@ import redis.clients.jedis.{Jedis, JedisPool, JedisPoolConfig}
 object RedisUtil {
   val host: String = ConfigUtil.getProperty("config.properties","redis.host")
   val port: String = ConfigUtil.getProperty("config.properties","redis.port")
+
   private val config = new JedisPoolConfig
   config.setMaxTotal(100) //最大线程数
   config.setMaxIdle(30) //最大空闲
@@ -19,6 +20,7 @@ object RedisUtil {
   private val pool = new JedisPool(config, host, port.toInt)
 
   def getClient: Jedis = {
-    pool.getResource
+    //pool.getResource //会出bug，放弃线程池，用下面这种算了
+    new Jedis("hadoop102",8000)
   }
 }

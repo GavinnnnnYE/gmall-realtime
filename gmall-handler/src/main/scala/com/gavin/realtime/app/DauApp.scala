@@ -64,7 +64,8 @@ object DauApp {
       rdd.foreachPartition(logs => {
         val client: Jedis = RedisUtil.getClient
         logs.foreach(log => {
-          client.sadd(GmallConstant.TOPIC_STARTUP + ":" + log.logDate, log.mid) //key要体现出日期，因为黑名单是根据当天来的
+          //key要体现出日期，因为黑名单是根据当天来的
+          client.sadd(GmallConstant.TOPIC_STARTUP + ":" + log.logDate, log.mid)
         })
         client.close()  // 又忘记关这个了，要记得啊！
       })

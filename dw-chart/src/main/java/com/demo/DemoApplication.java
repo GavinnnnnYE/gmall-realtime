@@ -6,6 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 
 //http://localhost:8060/index
+//http://localhost:8060/table
 
 
 @SpringBootApplication

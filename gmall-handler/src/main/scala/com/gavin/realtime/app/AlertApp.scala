@@ -18,7 +18,7 @@ object AlertApp extends BaseApp {
     val eventLogStream: DStream[EventLog] = enventLogStream.map(json => JSON.parseObject(json, classOf[EventLog]))
       .window(Minutes(5), Seconds(6))
 
-    // 1, 按照设备id进行分组
+    // 1, 按照设备id (mid) 进行分组
     val groupedEventStream: DStream[(String, Iterable[EventLog])] = eventLogStream.map(log => (log.mid, log))
       .groupByKey()
 
